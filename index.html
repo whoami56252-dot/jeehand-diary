@@ -1,42 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Private Diary</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Jeehand Diary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #111;
+      color: #fff;
+      padding: 15px 20px;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    textarea {
+      height: 250px;
+      resize: vertical;
+    }
+    button {
+      background: #111;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #333;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-
 <body>
 
-    <!-- LOGIN -->
-    <div class="login-card" id="loginBox">
-        <h1>📖 My Private Diary</h1>
-        <p class="welcome">Your safe personal notebook</p>
+<header>Jeehand</header>
 
-        <input type="text" id="username" placeholder="Your Name">
-        <input type="password" id="password" placeholder="Diary Password">
-        <button onclick="login()">Enter Diary</button>
-    </div>
+<div class="container" id="loginBox">
+  <h2>Login / Sign Up</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login / Register</button>
+</div>
 
-    <!-- DIARY -->
-    <div class="diary-card" id="diaryBox" style="display:none;">
+<div class="container hidden" id="diaryBox">
+  <h2>Your Private Diary</h2>
+  <textarea id="diaryText" placeholder="Write your thoughts here..."></textarea>
+  <button onclick="saveDiary()">Save Diary</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-        <!-- WATERMARK -->
-        <div class="watermark">JEEHAND</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        <input type="text" id="search" placeholder="🔍 Search page by title" onkeyup="searchPage()">
+  const firebaseConfig = {
+    apiKey: "AIzaSyDE4AYrrgFFsGBKK9RvxQeZAmAGysFkYc4",
+    authDomain: "jeehand-diary.firebaseapp.com",
+    projectId: "jeehand-diary",
+    storageBucket: "jeehand-diary.firebasestorage.app",
+    messagingSenderId: "675675876054",
+    appId: "1:675675876054:web:fc200210398d447e57f777"
+  };
 
-        <input type="text" id="pageName" placeholder="📌 Page title">
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-        <h2 id="pageTitle">📖 Your Diary</h2>
+  const loginBox = document.getElementById("loginBox");
+  const diaryBox = document.getElementById("diaryBox");
+  const diaryText = document.getElementById("diaryText");
 
-        <textarea id="pageText" placeholder="Write freely..." onkeyup="savePage(); autoGrow(this)">
-  </textarea>
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    </div>
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch {
+      await createUserWithEmailAndPassword(auth, email, password);
+    }
+  }
 
-    <script src="script.js"></script>
+  async function saveDiary() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    await setDoc(doc(db, "diaries", user.uid), {
+      text: diaryText.value,
+      time: Date.now()
+    });
+
+    alert("Diary saved securely 🔐");
+  }
+
+  async function loadDiary(user) {
+    const docRef = doc(db, "diaries", user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      diaryText.value = docSnap.data().text;
+    }
+  }
+
+  function logout() {
+    signOut(auth);
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginBox.classList.add("hidden");
+      diaryBox.classList.remove("hidden");
+      loadDiary(user);
+    } else {
+      loginBox.classList.remove("hidden");
+      diaryBox.classList.add("hidden");
+    }
+  });
+</script>
+
 </body>
-
 </html>
