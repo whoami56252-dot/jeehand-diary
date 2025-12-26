@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #020617, #0f172a);
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* LOGIN */
+.login-card {
+    background: #020617;
+    width: 350px;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+.login-card input {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: none;
+}
+
+.login-card button {
+    width: 95%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #22c55e;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.welcome {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+}
+
+/* DIARY */
+.diary-card {
+    position: relative;
+    width: 90%;
+    max-width: 750px;
+    height: 90vh;
+    background: #020617;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+}
+
+/* WATERMARK */
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px;
+    font-weight: bold;
+    color: rgba(56, 189, 248, 0.08);
+    letter-spacing: 8px;
+    pointer-events: none;
+    user-select: none;
+}
+
+#search,
+#pageName {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+#pageTitle {
+    margin: 10px 0;
+    color: #38bdf8;
+}
+
+textarea {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 17px;
+    resize: none;
+}

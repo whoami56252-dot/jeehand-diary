@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Private Diary</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+    <div class="login-card" id="loginBox">
+        <h1>📖 My Private Diary</h1>
+        <p class="welcome">Your safe personal notebook</p>
+
+        <input type="text" id="username" placeholder="Your Name">
+        <input type="password" id="password" placeholder="Diary Password">
+        <button onclick="login()">Enter Diary</button>
+    </div>
+
+    <!-- DIARY -->
+    <div class="diary-card" id="diaryBox" style="display:none;">
+
+        <!-- WATERMARK -->
+        <div class="watermark">JEEHAND</div>
+
+        <input type="text" id="search" placeholder="🔍 Search page by title" onkeyup="searchPage()">
+
+        <input type="text" id="pageName" placeholder="📌 Page title">
+
+        <h2 id="pageTitle">📖 Your Diary</h2>
+
+        <textarea id="pageText" placeholder="Write freely..." onkeyup="savePage(); autoGrow(this)">
+  </textarea>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
