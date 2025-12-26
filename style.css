@@ -1,95 +1,164 @@
-body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #020617, #0f172a);
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
-/* LOGIN */
-.login-card {
-    background: #020617;
-    width: 350px;
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
-}
+  <!-- 🔴 MOBILE RESPONSIVE FIX -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-.login-card input {
-    width: 90%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: none;
-}
+  <title>Jeehand Diary</title>
 
-.login-card button {
-    width: 95%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #22c55e;
-    font-size: 16px;
-    cursor: pointer;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
 
-.welcome {
-    font-size: 14px;
-    color: #94a3b8;
-    margin-bottom: 20px;
-}
+    header {
+      background: #111;
+      color: #fff;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
 
-/* DIARY */
-.diary-card {
-    position: relative;
-    width: 90%;
-    max-width: 750px;
-    height: 90vh;
-    background: #020617;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
-    display: flex;
-    flex-direction: column;
-}
+    .container {
+      width: 90%;
+      max-width: 400px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
 
-/* WATERMARK */
-.watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 80px;
-    font-weight: bold;
-    color: rgba(56, 189, 248, 0.08);
-    letter-spacing: 8px;
-    pointer-events: none;
-    user-select: none;
-}
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
 
-#search,
-#pageName {
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    margin-bottom: 12px;
-    font-size: 15px;
-}
+    input, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
 
-#pageTitle {
-    margin: 10px 0;
-    color: #38bdf8;
-}
+    textarea {
+      height: 220px;
+      resize: vertical;
+    }
 
-textarea {
-    flex: 1;
-    padding: 15px;
-    border-radius: 10px;
-    border: none;
-    font-size: 17px;
-    resize: none;
-}
+    button {
+      background: #111;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>Jeehand</header>
+
+<!-- 🔐 LOGIN BOX -->
+<div class="container" id="loginBox">
+  <h2>Login / Register</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Enter Diary</button>
+</div>
+
+<!-- 📘 DIARY BOX -->
+<div class="container hidden" id="diaryBox">
+  <h2>Your Private Diary</h2>
+  <textarea id="diaryText" placeholder="Write freely... this is private 🔐"></textarea>
+  <button onclick="saveDiary()">Save</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDE4AYrrgFFsGBKK9RvxQeZAmAGysFkYc4",
+    authDomain: "jeehand-diary.firebaseapp.com",
+    projectId: "jeehand-diary",
+    storageBucket: "jeehand-diary.firebasestorage.app",
+    messagingSenderId: "675675876054",
+    appId: "1:675675876054:web:fc200210398d447e57f777"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginBox = document.getElementById("loginBox");
+  const diaryBox = document.getElementById("diaryBox");
+  const diaryText = document.getElementById("diaryText");
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch {
+      await createUserWithEmailAndPassword(auth, email, password);
+    }
+  }
+
+  async function saveDiary() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    await setDoc(doc(db, "diaries", user.uid), {
+      text: diaryText.value,
+      time: Date.now()
+    });
+
+    alert("Saved 🔐");
+  }
+
+  async function loadDiary(user) {
+    const ref = doc(db, "diaries", user.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      diaryText.value = snap.data().text;
+    }
+  }
+
+  function logout() {
+    signOut(auth);
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginBox.classList.add("hidden");
+      diaryBox.classList.remove("hidden");
+      loadDiary(user);
+    } else {
+      loginBox.classList.remove("hidden");
+      diaryBox.classList.add("hidden");
+    }
+  });
+</script>
+
+</body>
+</html>
