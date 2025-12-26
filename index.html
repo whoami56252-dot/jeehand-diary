@@ -2,49 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jeehand Diary</title>
+
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f6f8;
-      margin: 0;
-      padding: 0;
     }
+
     header {
       background: #111;
       color: #fff;
-      padding: 15px 20px;
+      padding: 16px;
+      text-align: center;
       font-size: 22px;
       font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
     .container {
-      max-width: 600px;
+      width: 90%;
+      max-width: 400px;
       margin: 40px auto;
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
     }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
     input, textarea, button {
       width: 100%;
-      padding: 10px;
+      box-sizing: border-box;
+      padding: 12px;
       margin-top: 10px;
       font-size: 16px;
+      border-radius: 6px;
     }
+
+    input, textarea {
+      border: 1px solid #ccc;
+    }
+
     textarea {
-      height: 250px;
+      height: 220px;
       resize: vertical;
     }
+
     button {
       background: #111;
       color: #fff;
       border: none;
       cursor: pointer;
     }
+
     button:hover {
       background: #333;
     }
+
     .hidden {
       display: none;
     }
@@ -54,17 +75,19 @@
 
 <header>Jeehand</header>
 
+<!-- LOGIN -->
 <div class="container" id="loginBox">
-  <h2>Login / Sign Up</h2>
+  <h2>Login / Register</h2>
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login / Register</button>
+  <button onclick="login()">Enter Diary</button>
 </div>
 
+<!-- DIARY -->
 <div class="container hidden" id="diaryBox">
   <h2>Your Private Diary</h2>
-  <textarea id="diaryText" placeholder="Write your thoughts here..."></textarea>
-  <button onclick="saveDiary()">Save Diary</button>
+  <textarea id="diaryText" placeholder="Write freely... this is private 🔐"></textarea>
+  <button onclick="saveDiary()">Save</button>
   <button onclick="logout()">Logout</button>
 </div>
 
@@ -110,14 +133,14 @@
       time: Date.now()
     });
 
-    alert("Diary saved securely 🔐");
+    alert("Saved 🔐");
   }
 
   async function loadDiary(user) {
-    const docRef = doc(db, "diaries", user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      diaryText.value = docSnap.data().text;
+    const ref = doc(db, "diaries", user.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      diaryText.value = snap.data().text;
     }
   }
 
